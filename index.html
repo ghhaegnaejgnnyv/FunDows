@@ -1,23 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tiny Core Linux Emulator</title>
-    <script src="https://copy.sh/v86/build/v86.js"></script>
+    <title>TinyCore Web Emulator</title>
+    <meta charset="utf-8">
+    <style>
+        #screen {
+            width: 1024px;
+            height: 768px;
+            margin: 0 auto;
+            display: block;
+        }
+        .container {
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-    <h1>Tiny Core Linux Emulator</h1>
-    <div id="screen" style="width: 800px; height: 600px; border: 1px solid black;"></div>
+    <div class="container">
+        <h2>TinyCore Linux Emulator (winder.iso)</h2>
+        <canvas id="screen"></canvas>
+        <br>
+        <input type="button" value="Перезагрузить" id="reboot">
+    </div>
+
+    <!-- Подключение v86 -->
+    <script src="v86-lib/libv86.js"></script>
     <script>
-        const emulator = new V86CPU({
-            wasm_path: "https://copy.sh/v86/build/v86.wasm",
-            memory_size: 512 * 1024 * 1024,
-            vga_memory_size: 8 * 1024 * 1024,
+        const emulator = new v86({
             screen_container: document.getElementById("screen"),
-            bios: { url: "https://copy.sh/v86/bios/seabios.bin" },
-            vga_bios: { url: "https://copy.sh/v86/bios/vgabios.bin" },
-            cdrom: { url: "./winder.iso" },
+            bios: "v86-lib/seabios.bin",
+            vga_bios: "v86-lib/vgabios.bin",
+            cdrom: { url: "winder.iso" },
+            autostart: true,
+        });
+
+        // Кнопка перезагрузки
+        document.getElementById("reboot").addEventListener("click", () => {
+            emulator.stop();
+            emulator.restart();
         });
     </script>
 </body>
